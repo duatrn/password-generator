@@ -1,7 +1,6 @@
+import string
 from random import randint
-from typing import Dict, Tuple
-
-from utils import Utils
+from typing import Dict
 
 class PasswordGenerator:
     def __init__(self) -> None:
@@ -9,24 +8,20 @@ class PasswordGenerator:
         self._config = {"hasNumber": True, "hasSymbol": True, "hasCapital": True}
     
     @property
-    def LETTERS(self) -> Tuple:
-        return (
-            "a", "b", "c", "d", "e", "f", "g", "h", "i" ,"j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
-        )
+    def LETTERS(self) -> string:
+        return string.ascii_lowercase
     
     @property
-    def CAPITALS(self) -> Tuple:
-        return (
-            "A", "B", "C", "D", "E", "F", "G", "H", "I" ,"J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-        )
+    def CAPITALS(self) -> string:
+        return string.ascii_uppercase
 
     @property
-    def NUMBERS(self) -> Tuple:
-        return ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+    def NUMBERS(self) -> string:
+        return string.digits
 
     @property
-    def SYMBOLS(self) -> Tuple:
-        return ("!", "@", "#", "$", "%", "^", "&", "*", ":", "?", "-", "_", "+", "=")
+    def SYMBOLS(self) -> string:
+        return string.punctuation
 
     @property
     def wordLen(self) -> int:
@@ -54,16 +49,25 @@ class PasswordGenerator:
             self._config["hasCapital"] = hasCapital
 
     def _validate(self, passphrase: str = ""):
-        if passphrase == "": 
+        if passphrase == "": # check empty passphrase
             return False
 
-        passphrase = tuple([l for l in passphrase]) # convert string to tuple
+        def _check(p, l): # support function to check intersection between 2 strings
+            return False if len({p}.intersection({l})) == 0 else True
 
-        if self._config.get("hasNumber") and not Utils._checkItemInIter1InIter2(passphrase, self.NUMBERS): 
+        if _check(passphrase, self.LETTERS): # check passphrase has lowercase (at least 1)
             return False
-        if self._config.get("hasSymbol") and not Utils._checkItemInIter1InIter2(passphrase, self.SYMBOLS): 
+
+        # check passphrase has number (at least 1)
+        if self._config.get("hasNumber") and _check(passphrase, self.NUMBERS): 
             return False
-        if self._config.get("hasCapital") and not Utils._checkItemInIter1InIter2(passphrase, self.CAPITALS): 
+
+        # check passphrase has symbol (at least 1)
+        if self._config.get("hasSymbol") and _check(passphrase, self.SYMBOLS): 
+            return False
+
+        # check passphrase has uppercase (at least 1)
+        if self._config.get("hasCapital") and _check(passphrase, self.CAPITALS): 
             return False
 
         return True
@@ -96,6 +100,3 @@ class PasswordGenerator:
                 break
 
         return passGen
-
-if __name__ == "__main__":
-    pass
