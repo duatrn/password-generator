@@ -5,9 +5,9 @@ Random password generator
 > pip install -r requirement.txt
 
 ## Run
-> python main.py --length=10
+> main.py
 
 ## Help
-> python main.py --help
+> main.py --help
 
 
