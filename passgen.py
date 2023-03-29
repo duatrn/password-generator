@@ -2,30 +2,12 @@ import string
 from random import randint
 from typing import Dict
 
+
 class PasswordGenerator:
     def __init__(self) -> None:
         self._wordLen = 8
-        self._config = {"hasNumber": True, "hasSymbol": True, "hasCapital": True}
-    
-    @property
-    def LETTERS(self) -> string:
-        return string.ascii_lowercase
-    
-    @property
-    def CAPITALS(self) -> string:
-        return string.ascii_uppercase
-
-    @property
-    def NUMBERS(self) -> string:
-        return string.digits
-
-    @property
-    def SYMBOLS(self) -> string:
-        return string.punctuation
-
-    @property
-    def wordLen(self) -> int:
-        return self._wordLen
+        self._config = {"hasNumber": True,
+                        "hasSymbol": True, "hasCapital": True}
 
     def setWordLen(self, val: int) -> None:
         if val < 8:
@@ -48,26 +30,27 @@ class PasswordGenerator:
         if not hasCapital:
             self._config["hasCapital"] = hasCapital
 
-    def _validate(self, passphrase: str = ""):
-        if passphrase == "": # check empty passphrase
+    def _validate(self, passphrase: str = "") -> bool:
+        if passphrase == "":  # check empty passphrase
             return False
 
-        def _check(p, l): # support function to check intersection between 2 strings
+        def _check(p, l):  # support function to check intersection between 2 strings
             return False if len({p}.intersection({l})) == 0 else True
 
-        if _check(passphrase, self.LETTERS): # check passphrase has lowercase (at least 1)
+        # check passphrase has lowercase (at least 1)
+        if _check(passphrase, string.ascii_lowercase):
             return False
 
         # check passphrase has number (at least 1)
-        if self._config.get("hasNumber") and _check(passphrase, self.NUMBERS): 
+        if self._config.get("hasNumber") and _check(passphrase, string.digits):
             return False
 
         # check passphrase has symbol (at least 1)
-        if self._config.get("hasSymbol") and _check(passphrase, self.SYMBOLS): 
+        if self._config.get("hasSymbol") and _check(passphrase, string.punctuation):
             return False
 
         # check passphrase has uppercase (at least 1)
-        if self._config.get("hasCapital") and _check(passphrase, self.CAPITALS): 
+        if self._config.get("hasCapital") and _check(passphrase, string.ascii_uppercase):
             return False
 
         return True
@@ -82,21 +65,21 @@ class PasswordGenerator:
         """
 
         # configuration
-        chars = self.LETTERS
-        if self._config.get("hasNumber"): 
-            chars += self.NUMBERS
-        if self._config.get("hasSymbol"): 
-            chars += self.SYMBOLS
-        if self._config.get("hasCapital"): 
-            chars += self.CAPITALS
+        chars = string.ascii_lowercase
+        if self._config.get("hasNumber"):
+            chars += string.digits
+        if self._config.get("hasSymbol"):
+            chars += string.punctuation
+        if self._config.get("hasCapital"):
+            chars += string.ascii_uppercase
 
         # validation
         while True:
             passGen = ""
-            for i in range(0, self._wordLen): 
+            for i in range(0, self._wordLen):
                 passGen += chars[randint(0, len(chars)-1)]
             # validate the pass
-            if self._validate(passphrase=passGen): 
+            if self._validate(passphrase=passGen):
                 break
 
         return passGen
